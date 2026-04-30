@@ -15,64 +15,117 @@ function getComputerChoice() {
     } else {
         compChoice = "scissors";
     };
+    console.log(compChoice);
     return compChoice;
 }
 //getComputerChoice();
 
-//get human choice
-//prompt asks user to enter choice and stored in humanChoice
+/*get human choice
+prompt asks user to enter choice and stored in humanChoice
 function getHumanChoice() {
     let humanChoice;
     humanChoice = prompt("Enter your choice (rock/paper/scissors):", "");
     humanChoice = humanChoice.toLowerCase();
     return humanChoice;
-}
+}*/
 
-function playGame() {
-    let i = 0;
-    let compScore = 0;
-    let humanScore = 0;
-    //play the game for 5 rounds and store the score in compScore and humanScore
-    while (i < 5) {
-        let compChoice = getComputerChoice();
-        let humanChoice = getHumanChoice();
-        playRound(humanChoice, compChoice);
-        console.log("Computer's choice: " + compChoice);
-        console.log("Your choice: " + humanChoice);
-        function playRound(human, comp) {
-            if (human === "rock") {
-                if (comp === "scissors") {
-                    humanScore++;
-                } else if (comp === "paper") {
-                    compScore++;
-                }
-            } else if (human === "paper") {
-                if (comp === "rock") {
-                    humanScore++;
-                } else if (comp === "scissors") {
-                    compScore++;
-                }
-            } else if (human === "scissors") {
-                if (comp === "paper") {
-                    humanScore++;
-                } else if (comp === "rock") {
-                    compScore++;
-                }
+
+function play(playerChoice, compChoice) {
+    const choice = playerChoice;
+    let score = [0, 0]
+    switch (choice) {
+        case "rock":
+            if (compChoice === "scissors") {
+                score[0]++;
+            } else if (compChoice === "paper") {
+                score[1]++;
             }
-        }
-        console.log("ROUND " + (i+1) + ": " + compScore + ":" + humanScore);
-        i++;
+            break;
+        case "paper":
+            if (compChoice === "rock") {
+                score[0]++;
+            } else if (compChoice === "scissors") {
+                score[1]++;
+            }
+            break;
+        case "scissors":
+            if (compChoice === "paper") {
+                score[0]++;
+            } else if (compChoice === "rock") {
+                score[1]++;
+            }
+            break;
     }
-    //show final score and declares winner
-    console.log("Final: " + compScore + ":" + humanScore);
-    if (humanScore > compScore) {
-        console.log("Congratulations!! You Win!!");
-    } else if (compScore > humanScore) {
-        console.log("YOU LOSE!!");
-    } else {
-        console.log("It's a tie!!");
-    }
+    //console.log(score);
+    return score;
 }
 
-//play the game
-playGame();
+const start = document.querySelector('.start')
+const div = document.querySelector('.div');
+
+start.addEventListener('click', () => {
+    const divone = document.querySelector('.divone');
+    const div = document.createElement('div');
+    divone.appendChild(div);
+    //show choices when click start
+    const rock = document.createElement('button');
+    rock.textContent = 'Rock';
+    rock.setAttribute('id', 'rock');
+    rock.setAttribute('class', 'btn');
+    div.appendChild(rock);
+    const paper = document.createElement('button');
+    paper.textContent = 'Paper';
+    paper.setAttribute('id', 'paper');
+    paper.setAttribute('class', 'btn');
+    div.appendChild(paper);
+    const scissors = document.createElement('button');
+    scissors.textContent = 'Scissors';
+    scissors.setAttribute('id', 'scissors');
+    scissors.setAttribute('class', 'btn');
+    div.appendChild(scissors);
+    const playerScore = document.createElement('p');
+    playerScore.textContent = 'Player:';
+    playerScore.setAttribute('id', 'playerScore');
+    div.appendChild(playerScore);
+    const compScore = document.createElement('p');
+    compScore.textContent = 'Computer:';
+    compScore.setAttribute('id', 'compScore');
+    div.appendChild(compScore);
+    
+    let score = [0, 0]
+    const buttons = document.querySelectorAll('.btn');
+    //while(score[0] <= 5 || score[1] <= 5) {
+        buttons.forEach((btn => {
+            btn.addEventListener('click', function (e) {
+                //console.log(e.currentTarget.id);//get player's choice
+                scoreRound = play(e.currentTarget.id, getComputerChoice());
+                score[0] += scoreRound[0];
+                score[1] += scoreRound[1];
+                //console.log(score);
+                //display current score
+                playerScore.textContent = `Player: ${score[0]}`;
+                compScore.textContent = `Computer: ${score[1]}`;
+                //check who get 5 points first
+                if (score[0] == 5 || score [1] == 5) {
+                    if (score[0] == 5) {
+                        const playerWin = document.createElement('h3');
+                        playerWin.textContent = 'Congratulation! You Win! Start again?';
+                        div.appendChild(playerWin);
+                    } else {
+                        const compWin = document.createElement('h3');
+                        compWin.textContent = 'You Lose! Start again?';
+                        div.appendChild(compWin);
+                    }
+                    //restart
+                    const btnYes = document.createElement('button');
+                    btnYes.textContent = 'Yes';
+                    btnYes.setAttribute('id', 'yes');
+                    div.appendChild(btnYes);
+                    btnYes.addEventListener('click', () => {
+                        divone.removeChild(div);
+                    })
+                }
+            })
+        }))
+        //}
+    })
